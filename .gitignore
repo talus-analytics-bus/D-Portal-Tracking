@@ -43,3 +43,5 @@ dflat/data*/*
 dflat/test/*
 
 dflat/cronos
+
+.vscode

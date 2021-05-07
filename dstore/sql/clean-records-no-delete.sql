@@ -54,7 +54,7 @@ where aid in (
         where has_matching_sector
             and aid = act.aid
     )
-where exists (
+    and exists (
         select distinct aid
         from trans
         where aid = act.aid
@@ -149,7 +149,7 @@ create table if not exists act_repairs (
     title text,
     description_was_repaired boolean not null,
     title_was_repaired boolean not null
-)
+);
 update trans
 set trans_country = '_NONE_'
 where trans_country is null;

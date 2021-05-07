@@ -149,3 +149,13 @@ iati_xml.get_aid = function (it) {
   }
   return id;
 };
+
+iati_xml.get_provider_or_receiver_org_info = function (it, org_type) {
+  const tag = refry.tag(it, org_type);
+  if (tag === undefined) return undefined;
+  else {
+    const narrative_text = refry.tagval(tag, "narrative");
+    const ref = tag.ref;
+    return { narrative_text, ref };
+  }
+};

@@ -140,6 +140,10 @@ dstore_db.tables = {
       codes: "sector_category",
     }, // sector group ( category )
     { name: "trans_id", INTEGER: true, INDEX: true }, // unique id within activity, can be used to group split values
+    { name: "trans_receiver_org_ref", TEXT: true },
+    { name: "trans_receiver_org_narrative_text", TEXT: true },
+    { name: "trans_provider_org_ref", TEXT: true },
+    { name: "trans_provider_org_narrative_text", TEXT: true },
   ],
   budget: [
     { name: "aid", TEXT: true, INDEX: true, HASH: true },
@@ -217,6 +221,16 @@ dstore_db.tables = {
   policy: [
     { name: "aid", TEXT: true, INDEX: true, HASH: true },
     { name: "policy_code", NOCASE: true, INDEX: true, codes: "policy" }, // the code is prefixed by the significance and an underscore then the code
+  ],
+
+  // custom tables
+  // participating organizations
+  act_participating_org: [
+    { name: "fk_aid", TEXT: true, INDEX: true, HASH: true },
+    { name: "ref", TEXT: true },
+    { name: "role", INTEGER: true },
+    { name: "org_type", INTEGER: true },
+    { name: "narrative_text", TEXT: true },
   ],
 };
 
@@ -475,6 +489,25 @@ dstore_db.refresh_act = async function (db, aid, xml, head) {
       t[n] = act_json[n];
     } // copy some stuff
 
+    // custom fields
+    const trans_provider_info = iati_xml.get_provider_or_receiver_org_info(
+      it,
+      "provider-org"
+    );
+    const trans_receiver_info = iati_xml.get_provider_or_receiver_org_info(
+      it,
+      "receiver-org"
+    );
+    if (trans_provider_info !== undefined) {
+      t["trans_provider_org_ref"] = trans_provider_info.ref;
+      t["trans_provider_org_narrative_text"] = trans_provider_info.narrative_text;
+    }
+    if (trans_receiver_info !== undefined) {
+      t["trans_receiver_org_ref"] = trans_receiver_info.ref;
+      t["trans_receiver_org_narrative_text"] = trans_receiver_info.narrative_text;
+    }
+
+    // standard fields
     t["trans_ref"] = it["ref"];
     t["trans_description"] = refry.tagval_narrative(it, "description");
     t["trans_day"] = iati_xml.get_isodate_number(it, "transaction-date");
@@ -728,6 +761,7 @@ dstore_db.refresh_act = async function (db, aid, xml, head) {
       await dstore_db.delete_from(db, v, { aid: t.aid });
     }
 
+    // standard fields
     t.title = refry.tagval_narrative(act, "title");
     t.description = refry.tagval_narrative(act, "description");
     t.reporting = refry.tagval_narrative(act, "reporting-org");

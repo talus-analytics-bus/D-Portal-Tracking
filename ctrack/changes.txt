@@ -1,3 +1,53 @@
+Development Portal (2021-07-24 shi)
+==============================
+Add stats link to d-preview
+Update d-preview footer layout
+Update d-preview css
+
+
+Development Portal (2021-06-24 shi)
+==============================
+Update csv download description for aid
+
+
+Development Portal (2021-06-23 shi)
+==============================
+Update crs-add section in SAVi
+Include code number for code name column
+Update css for crs-add section
+Display empty-description when applicable for channel-code
+Add CSV download description table for map view
+Add translations for all languages
+Update css for new CSV download table on map view
+
+
+Development Portal (2021-06-22 shi)
+==============================
+Fix crs-add/other-flags SAVi view
+
+
+Development Portal (2021-05-28 shi)
+==============================
+Fix typo for dquery ctrl+enter run
+Add link to dquery documentation how to
+
+
+Development Portal (2021-05-20 shi)
+==============================
+Update dquery json type
+
+
+Development Portal (2021-05-19 shi)
+==============================
+Update dquery style
+Update link text for dquery
+
+
+Development Portal (2021-05-07 shi)
+==============================
+Add bash script for OECD
+
+
 Development Portal (2021-04-26 shi)
 ==============================
 Remove max-width for sector subheaders

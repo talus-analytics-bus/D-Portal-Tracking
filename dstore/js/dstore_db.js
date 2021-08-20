@@ -491,25 +491,6 @@ dstore_db.refresh_act = async function (db, aid, xml, head) {
       t[n] = act_json[n];
     } // copy some stuff
 
-    // custom fields
-    const trans_provider_info = iati_xml.get_provider_or_receiver_org_info(
-      it,
-      "provider-org"
-    );
-    const trans_receiver_info = iati_xml.get_provider_or_receiver_org_info(
-      it,
-      "receiver-org"
-    );
-    if (trans_provider_info !== undefined) {
-      t["trans_provider_org_ref"] = trans_provider_info.ref;
-      t["trans_provider_org_narrative_text"] = trans_provider_info.narrative_text;
-    }
-    if (trans_receiver_info !== undefined) {
-      t["trans_receiver_org_ref"] = trans_receiver_info.ref;
-      t["trans_receiver_org_narrative_text"] = trans_receiver_info.narrative_text;
-    }
-
-    // standard fields
     t["trans_ref"] = it["ref"];
     t["trans_description"] = refry.tagval_narrative(it, "description");
     t["trans_day"] = iati_xml.get_isodate_number(it, "transaction-date");
@@ -743,6 +724,7 @@ dstore_db.refresh_act = async function (db, aid, xml, head) {
     // I think we should complain a lot about this during import
     if (await dstore_db.warn_dupes(db, t.aid, t.slug)) {
       //			console.log("\nSKIPPING: "+t.aid);
+      await dstore_back.replace(db, "slug", { aid: t.aid, slug: t.slug });
       return false;
     }
 
@@ -756,19 +738,23 @@ dstore_db.refresh_act = async function (db, aid, xml, head) {
       "country",
       "sector",
       "location",
-      "slug",
       "policy",
       "related",
     ]) {
       await dstore_db.delete_from(db, v, { aid: t.aid });
     }
+    // we want multiple slug entries when the activity id is used many times
+    await dstore_db.delete_from(db, "slug", { slug: t.slug, aid: t.aid });
 
-    // standard fields
     t.title = refry.tagval_narrative(act, "title");
     t.description = refry.tagval_narrative(act, "description");
     t.reporting = refry.tagval_narrative(act, "reporting-org");
     t.reporting_ref = refry.tagattr(act, "reporting-org", "ref");
     t.status_code = tonumber(refry.tagattr(act, "activity-status", "code"));
+
+    if ("string" == typeof t.reporting_ref) {
+      t.reporting_ref = t.reporting_ref.trim();
+    } // remove white space
 
     t.flags = 0;
     if (codes.publisher_secondary[t.reporting_ref]) {
@@ -1164,9 +1150,9 @@ dstore_db.refresh_act = async function (db, aid, xml, head) {
     });
     refry.tags(act, "activity-date", function (it) {
       if (it.type == "start-actual" || it.type == "2") {
-        t.day_start = t.day_start || iati_xml.get_isodate_number(it);
+        t.day_start = iati_xml.get_isodate_number(it) || t.day_start;
       } else if (it.type == "end-actual" || it.type == "4") {
-        t.day_end = t.day_end || iati_xml.get_isodate_number(it);
+        t.day_end = iati_xml.get_isodate_number(it) || t.day_end;
       }
     });
 

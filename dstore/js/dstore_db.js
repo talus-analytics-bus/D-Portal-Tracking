@@ -227,6 +227,8 @@ dstore_db.tables = {
   // participating organizations
   act_participating_org: [
     { name: "fk_aid", TEXT: true, INDEX: true, HASH: true },
+    { name: "root", TEXT: true },
+    { name: "xson", TEXT: true },
     { name: "ref", TEXT: true },
     { name: "role", INTEGER: true },
     { name: "org_type", INTEGER: true },

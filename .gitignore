@@ -8,7 +8,6 @@ package-lock.json
 */out/*
 */node_modules/*
 */tmp/*
-*/cache/*
 
 tmp/*
 docs/*
@@ -16,9 +15,10 @@ logs/*
 
 dstore/*.import.last.log
 dstore/db/*
-dstore/cache/*
+dstore/cache/bulk/*
 dstore/dataiati*
 dstore/instance/*
+!dstore/cache/bulk/import.sh
 
 dportal/static/*
 dportal/production/*

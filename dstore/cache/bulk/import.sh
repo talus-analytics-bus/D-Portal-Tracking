@@ -32,7 +32,7 @@ sqlite3 db/dstore.sqlite ".read sql/clean-records-no-delete.sql" && \
 sqlite3 db/dstore.sqlite ".read sql/create-indexes.sql";
 
 # TODO clone current GHS Tracking database, copy sqlite db file to GHS-T repo,
-# update config file, etc. all with code.
+# update config file, delete existing flows data, etc. all with code.
 # sqlite3 db/dstore.sqlite ".read sql/create-indexes.sql" && \
 # cd ../../../../ghs-tracking-api/ && \
 # pipenv run python repair_sqlite_titles_descs.py;

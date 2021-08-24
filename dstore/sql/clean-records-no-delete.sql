@@ -152,4 +152,5 @@ create table if not exists act_repairs (
 );
 update trans
 set trans_country = '_NONE_'
-where trans_country is null;
+where trans_country is null
+    or trans_country = '';

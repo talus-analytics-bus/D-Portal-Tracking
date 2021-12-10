@@ -1,13 +1,17 @@
-# import_iati_raw.sh
-# Same as import_iati.sh but does not run clean-records.sql after initial
-# data import
-# Disable exit on non 0
+BASEDIR=$(dirname $0)
+ORIGDIR=${PWD}
+cd $BASEDIR;
+
+
 set +e
 
 echo Getting IATI ZIP
 if [ ! -s data ]
 then
-  wget -O iati.zip https://www.dropbox.com/s/kkm80yjihyalwes/iati_dump.zip?dl=1
+  if [ ! -s iati.zip ]
+  then
+    wget -O iati.zip https://www.dropbox.com/s/kkm80yjihyalwes/iati_dump.zip?dl=1
+  fi
   unzip iati.zip
 fi
 
@@ -31,10 +35,8 @@ done
 sqlite3 db/dstore.sqlite ".read sql/clean-records-no-delete.sql" && \
 sqlite3 db/dstore.sqlite ".read sql/create-indexes.sql";
 
-# TODO clone current GHS Tracking database, copy sqlite db file to GHS-T repo,
-# update config file, delete existing flows data, etc. all with code.
-# sqlite3 db/dstore.sqlite ".read sql/create-indexes.sql" && \
-# cd ../../../../ghs-tracking-api/ && \
-# pipenv run python repair_sqlite_titles_descs.py;
 
-echo 'Done!'
+cd ../../ingest/assistance/iati/sqlite/create-scripts/ && \
+for FILE in *; do sqlite3 ../../../../../D-Portal-Tracking/dstore/db/dstore.sqlite ".read $FILE"; done
+
+cd $ORIGDIR;

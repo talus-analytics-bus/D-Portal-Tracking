@@ -19,6 +19,7 @@ dstore/cache/bulk/*
 dstore/dataiati*
 dstore/instance/*
 !dstore/cache/bulk/import.sh
+!dstore/cache/bulk/post-import.sh
 
 dportal/static/*
 dportal/production/*

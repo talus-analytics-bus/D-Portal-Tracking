@@ -10,7 +10,7 @@ if [ ! -s data ]
 then
   if [ ! -s iati.zip ]
   then
-    wget -O iati.zip https://www.dropbox.com/s/kkm80yjihyalwes/iati_dump.zip?dl=1
+    curl -X GET "https://www.dropbox.com/s/kkm80yjihyalwes/iati_dump.zip?dl=1" -L -o iati.zip
   fi
   unzip iati.zip
 fi

@@ -1,3 +1,4 @@
+echo Starting import
 BASEDIR=$(dirname $0)
 ORIGDIR=${PWD}
 cd $BASEDIR;
@@ -33,3 +34,4 @@ for directory in cache/bulk/data/*; do
 done
 
 cd $ORIGDIR;
+echo Ending import

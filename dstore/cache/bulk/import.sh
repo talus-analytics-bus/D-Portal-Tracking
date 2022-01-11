@@ -6,12 +6,12 @@ ORIGDIR=${PWD}
 cd $BASEDIR;
 
 d=`date +%Y%m%d`
-iatifnbase='iati_'$d'.zip'
+iatifnbase='iati_'$d
 iatifn=$iatifnbase'.zip'
 
 set +e
-
-if [ ! -s $iatifnbase]
+echo Checking for ZIP file named $iatifn
+if [ ! -s $iatifnbase ]
 then
   echo IATI data directory not found
   if [ ! -s $iatifn ]

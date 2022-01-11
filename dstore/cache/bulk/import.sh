@@ -1,3 +1,5 @@
+# Fetch data ZIP from https://iati-data-dump.codeforiati.org/
+
 echo Starting import
 BASEDIR=$(dirname $0)
 ORIGDIR=${PWD}
@@ -11,7 +13,7 @@ if [ ! -s data ]
 then
   if [ ! -s iati.zip ]
   then
-    curl -X GET "https://www.dropbox.com/s/kkm80yjihyalwes/iati_dump.zip?dl=1" -L -o iati.zip
+    curl -X GET "https://gitlab.com/codeforIATI/iati-data/-/archive/main/iati-data-main.zip" -L -o iati.zip
   fi
   unzip iati.zip
 fi
@@ -20,7 +22,7 @@ cd ../..
 
 bash ../bin/dstore-reset
 
-for directory in cache/bulk/data/*; do
+for directory in cache/bulk/iati/data/*; do
   echo ''
   echo Directory:
   echo $directory

@@ -5,24 +5,29 @@ BASEDIR=$(dirname $0)
 ORIGDIR=${PWD}
 cd $BASEDIR;
 
+d=`date +%Y%m%d`
+iatifnbase='iati_'$d'.zip'
+iatifn=$iatifnbase'.zip'
 
 set +e
 
-echo Getting IATI ZIP
-if [ ! -s iati-data-main]
+if [ ! -s $iatifnbase]
 then
-  if [ ! -s iati.zip ]
+  echo IATI data directory not found
+  if [ ! -s $iatifn ]
   then
-    curl -X GET "https://gitlab.com/codeforIATI/iati-data/-/archive/main/iati-data-main.zip" -L -o iati.zip
+    echo Getting IATI ZIP
+    curl -X GET "https://gitlab.com/codeforIATI/iati-data/-/archive/main/iati-data-main.zip" -L -o $iatifn
   fi
-  unzip iati.zip
+  echo Unzipping IATI data
+  unzip $iatifn -d $iatifnbase
 fi
 
 cd ../..
 
 bash ../bin/dstore-reset
 
-for directory in cache/bulk/iati-data-main/data/*; do
+for directory in cache/bulk/$iatifnbase/iati-data-main/data/*; do
   echo ''
   echo Directory:
   echo $directory

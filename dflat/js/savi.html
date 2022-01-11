@@ -41,9 +41,9 @@
 	</div>
 <!--	IATI IDENTIFIER AND SOURCES	-->
 	<div class="wrap_iati_identifier">
-		<div class="text">IATI IDENTIFIER <a href="{origin}/q.html?aid={_it./iati-identifier}" target="blank">{_it./iati-identifier}</a></div>
+		<div class="text">IATI IDENTIFIER <a href="{origin}/savi/?aid={_it./iati-identifier}" target="blank">{_it./iati-identifier}</a></div>
 		<div class="data_source">
-			<a class="xml" href="{origin}/q.xml?aid={_it./iati-identifier}" target="_blank"><span>view</span> xml</a><a class="json" href="{origin}/q.json?&from=xson&root=/iati-activities/iati-activity&aid={_it./iati-identifier}" target="_blank"><span>view</span> json</a><a class="dlogs" href="{origin}/ctrack.html#view=dash_sluglog&slug={_it.@dataset}" target="_blank"><span>view dataset</span> logs</a><a class="slug" href="http://iatiregistry.org/dataset/{_it.@dataset}" target="_blank"><span>view iati registry</span> dataset</a><a class="csv" href="{origin}/q.csv?&from=xson&root=/iati-activities/iati-activity&aid={_it./iati-identifier}" target="_blank"><span>download</span> csv</a>
+			<a class="xml" href="{origin}/q.xml?aid={_it./iati-identifier}" target="_blank"><span>view</span> xml</a><a class="json" href="{origin}/q.json?aid={_it./iati-identifier}" target="_blank"><span>view</span> json</a><a class="dlogs" href="{origin}/ctrack.html#view=dash_sluglog&slug={_it.@dataset}" target="_blank"><span>view dataset</span> logs</a><a class="slug" href="http://iatiregistry.org/dataset/{_it.@dataset}" target="_blank"><span>view iati registry</span> dataset</a><a class="csv" href="{origin}/q.csv?aid={_it./iati-identifier}" target="_blank"><span>download</span> csv</a>
 		</div>
 	</div>
 {_it./document-link&&_it:/wrap-document-link||}
@@ -507,7 +507,7 @@
 <!--	RELATED ACTIVITY ROWS	-->
 #^/related-activity
 <tr class="row_count">
-	<td class="related_ref" data-sort-value="{_it.@ref}"><a href="{origin}/q.html?aid={_it.@ref}" target="_blank">{_it.@ref||}</a></td>
+	<td class="related_ref" data-sort-value="{_it.@ref}"><a href="{origin}/savi/?aid={_it.@ref}" target="_blank">{_it.@ref||}</a></td>
 	<td class="related_type" data-sort-value="{_it.@type-code}">{_it.@type-name||}</td>
 	<td class="related_desc" data-sort-value="{_it.@type-description}">{_it.@type-description||/empty-description}</td>
 </tr>
@@ -684,7 +684,7 @@
 #^/result_indicator_facet
 {_it:/result_indicator_row_indicator||}
 <div class="wrap_result_table">
-	<table class="budget result sortable">
+	<table class="budget result">
 		{result-table}
 		{_it.@measure&&_it:/result_measure||}
 		{_it./period&&_it./facet&&_it:/wrap_result_indicator_row_all||_it:/result_indicator_period_only}
@@ -700,12 +700,12 @@
 #^result-table	<!--	RESULT TABLE HEADERS	-->
 <thead>
 	<tr>
-		<th class="result_indi" data-sort="string" data-sort-multicolumn="0,1,2,3,4,5">FACET</th>
-		<th class="result_base" data-sort="int" data-sort-multicolumn="0,1,2,3,4,5">BASELINE</th>
-		<th class="result_target" data-sort="int" data-sort-multicolumn="0,1,2,3,4,5">TARGET</th>
-		<th class="result_actual" data-sort="int" data-sort-multicolumn="0,1,2,3,4,5">ACTUAL</th>			
-		<th class="result_percent" data-sort="int" data-sort-multicolumn="0,1,2,3,4,5">%</th>			
-		<th class="result_period" data-sort="int" data-sort-multicolumn="0,1,2,3,4,5">PERIOD</th>				
+		<th class="result_indi">FACET</th>
+		<th class="result_base">BASELINE</th>
+		<th class="result_target">TARGET</th>
+		<th class="result_actual">ACTUAL</th>			
+		<th class="result_percent">%</th>			
+		<th class="result_period">PERIOD</th>				
 	</tr>
 </thead>
 
@@ -759,9 +759,46 @@
 	<td class="result_actual">{_it.@actual||/empty_result}</td>
 	<td class="result_percent">{_it.@percent>=0&&_it:@percent||_it:@percent-null}</td>
 	<td class="result_period">
-		{_it./period-start@iso-date||} : {_it./period-end@iso-date||}
-		<div class="result_date_bar">
-			<div class="result_date_overlay" style="width:calc({_it./period-percent} * 1.30px); background-color:{period.{_it./period-percent}};"></div>
+		{_it./period-percent&&_it:/periods||/empty_period}
+	</td>
+</tr>
+{_it./baseline/comment/narrative&&_it:/baseline_comment||}
+{_it./target/comment/narrative&&_it:/target_comment||}
+{_it./actual/comment/narrative&&_it:/actual_comment||}
+
+#^/periods
+{_it./period-start@iso-date||} : {_it./period-end@iso-date||}
+<div class="result_date_bar">
+	<div class="result_date_overlay" style="width:calc({_it./period-percent} * 1.30px); background-color:{period.{_it./period-percent}};"></div>
+</div>
+
+#^/baseline_comment
+<tr class="row_comment baseline_comment">
+	<td></td>
+	<td colspan="5">
+		<div class="result_comment_wrap">
+			<div class="result_comment_type"><b>Baseline</b> comment</div>
+			<div class="result_comment">{_it./baseline/comment/narrative.0.text||}</div>
+		</div>
+	</td>
+</tr>
+#^/target_comment
+<tr class="row_comment target_comment">
+	<td></td>
+	<td colspan="5">
+		<div class="result_comment_wrap">
+			<div class="result_comment_type"><b>Target</b> comment</div>
+			<div class="result_comment">{_it./target/comment/narrative.0.text||}</div>
+		</div>
+	</td>
+</tr>
+#^/actual_comment
+<tr class="row_comment actual_comment">
+	<td></td>
+	<td colspan="5">
+		<div class="result_comment_wrap">
+			<div class="result_comment_type"><b>Actual</b> comment</div>
+			<div class="result_comment">{_it./actual/comment/narrative.0.text||}</div>
 		</div>
 	</td>
 </tr>
@@ -770,13 +807,15 @@
 <div class="result_empty">No dimension has been provided</div>
 #^/empty_location
 <div class="result_empty">No location has been provided</div>
+#^/empty_period
+<div class="result_empty">Not provided</div>
 
 #^/result_indicator_row_facet_dimension_wrap
 {_it.@name||_it.@value&&_it:/result_indicator_row_facet_dimension||/empty_dimension}
 
 #^/result_indicator_row_facet_dimension
 <div class="result_facet">
-	<span class="result_facet_name">{_it.@name||}</span> = <span class="result_facet_value">{_it.@value||}</span>
+	<span class="result_facet_name">{_it.@name||}</span> : <span class="result_facet_value">{_it.@value||}</span>
 </div>
 
 #^/result_indicator_row_facet_location_wrap
@@ -784,7 +823,7 @@
 
 #^/result_indicator_row_facet_location
 <div class="result_facet">
-	<span class="result_facet_name">Location</span> = <span class="result_facet_value">{_it.@ref||}</span>
+	<span class="result_facet_name">Location</span> : <span class="result_facet_value">{_it.@ref||}</span>
 </div>
 
 #^/result_year
@@ -1255,15 +1294,15 @@
 
 #^/provider-org-ref
 <div>
-	<span title="Organisation Reference" class="ref">
+	<span title="Machine-readable identification string for the organisation issuing the report." class="ref">
 		REF <a href="{origin}/ctrack.html?publisher={_it./provider-org@ref}" target="_blank">{_it./provider-org@ref||}</a>
 	</span>
 </div>
 
 #^/provider-org-aid
 <div>
-	<span title="Activity ID" class="ref">
-		ID <a href="{origin}/q.html?aid={_it./provider-org@provider-activity-id}" target="_blank">{_it./provider-org@provider-activity-id||}</a>
+	<span title="If incoming funds are being provided from the budget of another activity that is reported to IATI, this is the provider’s unique IATI activity identifier for that activity." class="ref">
+		ID <a href="{origin}/savi/?aid={_it./provider-org@provider-activity-id}" target="_blank">{_it./provider-org@provider-activity-id||}</a>
 	</span>
 </div>
 
@@ -1276,15 +1315,15 @@
 
 #^/receiver-org-ref
 <div>
-	<span title="Organisation Reference" class="ref">
+	<span title="Machine-readable identification string for the organisation issuing the report." class="ref">
 		REF <a href="{origin}/ctrack.html?publisher={_it./receiver-org@ref}" target="_blank">{_it./receiver-org@ref||}</a>
 	</span>
 </div>
 
 #^/receiver-org-aid
 <div>
-	<span title="Activity ID" class="ref">
-		ID <a href="{origin}/q.html?aid={_it./receiver-org@receiver-activity-id}" target="_blank">{_it./receiver-org@receiver-activity-id||}</a>
+	<span title="If outgoing funds are being provided to another activity that is reported to IATI, this is the receiver's unique IATI activity identifier for that activity." class="ref">
+		ID <a href="{origin}/savi/?aid={_it./receiver-org@receiver-activity-id}" target="_blank">{_it./receiver-org@receiver-activity-id||}</a>
 	</span>
 </div>
 
@@ -1428,6 +1467,7 @@
 		{_it./sector-9&&_it:sectors-9||}
 		{_it./sector-10&&_it:sectors-10||}
 		{_it./sector-11&&_it:sectors-11||}
+		{_it./sector-12&&_it:sectors-12||}
 		{_it./sector-99&&_it:sectors-99||}
 		{_it./sector-98&&_it:sectors-98||}
 	</div>
@@ -1436,7 +1476,7 @@
 #^sectors-1
 <div class="sector_vocab">
 	<div class="header">
-		OECD DAC CRS 5 digit <span class="count">( {_it./sector-1.length||no_length} )</span>
+		OECD DAC CRS 5 digit<span class="type">{_it./sector-1.0.@vocabulary||}</span><span class="count">( {_it./sector-1.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-1.0.@vocabulary-description||} <a href="{_it./sector-1.0.@vocabulary-url}" target="_blank">{_it./sector-1.0.@vocabulary-url}</a></div>
 	{_it./sector-1:/sector_dac||}
@@ -1446,7 +1486,7 @@
 #^sectors-2
 <div class="sector_vocab">
 	<div class="header">
-		OECD DAC CRS 3 digit <span class="count">( {_it./sector-2.length||no_length} )</span>
+		OECD DAC CRS 3 digit<span class="type">{_it./sector-2.0.@vocabulary||}</span><span class="count">( {_it./sector-2.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-2.0.@vocabulary-description||} <a href="{_it./sector-2.0.@vocabulary-url}" target="_blank">{_it./sector-2.0.@vocabulary-url}</a></div>
 	{_it./sector-2:/sector_dac||}
@@ -1456,7 +1496,7 @@
 #^sectors-3
 <div class="sector_vocab">
 	<div class="header">
-		Classification of the Functions of Government (UN) <span class="count">( {_it./sector-3.length||no_length} )</span>
+		Classification of the Functions of Government (UN)<span class="type">{_it./sector-3.0.@vocabulary||}</span><span class="count">( {_it./sector-3.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-3.0.@vocabulary-description||} <a href="{_it./sector-3.0.@vocabulary-url}" target="_blank">{_it./sector-3.0.@vocabulary-url}</a></div>
 	{_it./sector-3:/sector||}
@@ -1464,7 +1504,7 @@
 #^sectors-4
 <div class="sector_vocab">
 	<div class="header">
-		Statistical classification of economic activities in the European Community <span class="count">( {_it./sector-4.length||no_length} )</span>
+		Statistical classification of economic activities in the European Community<span class="type">{_it./sector-4.0.@vocabulary||}</span><span class="count">( {_it./sector-4.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-4.0.@vocabulary-description||} <a href="{_it./sector-4.0.@vocabulary-url}" target="_blank">{_it./sector-4.0.@vocabulary-url}</a></div>
 	{_it./sector-4:/sector||}
@@ -1472,7 +1512,7 @@
 #^sectors-5
 <div class="sector_vocab">
 	<div class="header">
-		National Taxonomy for Exempt Entities (USA) <span class="count">( {_it./sector-5.length||no_length} )</span>
+		National Taxonomy for Exempt Entities (USA)<span class="type">{_it./sector-5.0.@vocabulary||}</span><span class="count">( {_it./sector-5.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-5.0.@vocabulary-description||} <a href="{_it./sector-5.0.@vocabulary-url}" target="_blank">{_it./sector-5.0.@vocabulary-url}</a></div>
 	{_it./sector-5:/sector||}
@@ -1480,7 +1520,7 @@
 #^sectors-6
 <div class="sector_vocab">
 	<div class="header">
-		AidData <span class="count">( {_it./sector-6.length||no_length} )</span>
+		AidData<span class="type">{_it./sector-6.0.@vocabulary||}</span><span class="count">( {_it./sector-6.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-6.0.@vocabulary-description||}</div>
 	{_it./sector-6:/sector||}
@@ -1488,7 +1528,7 @@
 #^sectors-7
 <div class="sector_vocab">
 	<div class="header">
-		SDG Goal <span class="count">( {_it./sector-7.length||no_length} )</span>
+		SDG Goal<span class="type">{_it./sector-7.0.@vocabulary||}</span><span class="count">( {_it./sector-7.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-7.0.@vocabulary-description||} <a href="{_it./sector-7.0.@vocabulary-url}" target="_blank">{_it./sector-7.0.@vocabulary-url}</a></div>
 	{_it./sector-7:/sector||}
@@ -1496,7 +1536,7 @@
 #^sectors-8
 <div class="sector_vocab">
 	<div class="header">
-		SDG Target <span class="count">( {_it./sector-8.length||no_length} )</span>
+		SDG Target<span class="type">{_it./sector-8.0.@vocabulary||}</span><span class="count">( {_it./sector-8.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-8.0.@vocabulary-description||} <a href="{_it./sector-8.0.@vocabulary-url}" target="_blank">{_it./sector-8.0.@vocabulary-url}</a></div>
 	{_it./sector-8:/sector||}
@@ -1504,7 +1544,7 @@
 #^sectors-9
 <div class="sector_vocab">
 	<div class="header">
-		SDG Indicator <span class="count">( {_it./sector-9.length||no_length} )</span>
+		SDG Indicator<span class="type">{_it./sector-9.0.@vocabulary||}</span><span class="count">( {_it./sector-9.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-9.0.@vocabulary-description||} <a href="{_it./sector-9.0.@vocabulary-url}" target="_blank">{_it./sector-9.0.@vocabulary-url}</a></div>
 	{_it./sector-9:/sector||}
@@ -1512,7 +1552,7 @@
 #^sectors-10
 <div class="sector_vocab">
 	<div class="header">
-		Humanitarian Global Clusters (Inter-Agency Standing Committee) <span class="count">( {_it./sector-10.length||no_length} )</span>
+		Humanitarian Global Clusters (Inter-Agency Standing Committee)<span class="type">{_it./sector-10.0.@vocabulary||}</span><span class="count">( {_it./sector-10.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-10.0.@vocabulary-description||} <a href="{_it./sector-10.0.@vocabulary-url}" target="_blank">{_it./sector-10.0.@vocabulary-url}</a></div>
 	{_it./sector-10:/sector||}
@@ -1520,15 +1560,23 @@
 #^sectors-11
 <div class="sector_vocab">
 	<div class="header">
-		North American Industry Classification System (NAICS) <span class="count">( {_it./sector-11.length||no_length} )</span>
+		North American Industry Classification System (NAICS)<span class="type">{_it./sector-11.0.@vocabulary||}</span><span class="count">( {_it./sector-11.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-11.0.@vocabulary-description||} <a href="{_it./sector-11.0.@vocabulary-url}" target="_blank">{_it./sector-11.0.@vocabulary-url}</a></div>
 	{_it./sector-11:/sector||}
 </div>
+#^sectors-12
+<div class="sector_vocab">
+	<div class="header">
+		UN System Function<span class="type">{_it./sector-12.0.@vocabulary||}</span><span class="count">( {_it./sector-12.length||no_length} )</span>
+	</div>
+	<div class="subheader">{_it./sector-12.0.@vocabulary-description||} <a href="{_it./sector-12.0.@vocabulary-url}" target="_blank">{_it./sector-12.0.@vocabulary-url}</a></div>
+	{_it./sector-12:/sector||}
+</div>
 #^sectors-99
 <div class="sector_vocab">
 	<div class="header">
-		Reporting Organisation <span class="count">( {_it./sector-99.length||no_length} )</span>
+		Reporting Organisation<span class="type">{_it./sector-99.0.@vocabulary||}</span><span class="count">( {_it./sector-99.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-99.0.@vocabulary-description||}{_it./sector-99.0.@vocabulary-uri&&_it:sectors-vocab-uri-99||}</div>
 	{_it./sector-99:/sector||}
@@ -1536,7 +1584,7 @@
 #^sectors-98
 <div class="sector_vocab">
 	<div class="header">
-		Reporting Organisation 2 <span class="count">( {_it./sector-98.length||no_length} )</span>
+		Reporting Organisation 2<span class="type">{_it./sector-98.0.@vocabulary||}</span><span class="count">( {_it./sector-98.length||no_length} )</span>
 	</div>
 	<div class="subheader">{_it./sector-98.0.@vocabulary-description||}{_it./sector-98.0.@vocabulary-uri&&_it:sectors-vocab-uri-98||}</div>
 	{_it./sector-98:/sector||}
@@ -1772,7 +1820,6 @@
 <tr class="row_count">
 	<td class="part_org_name">{_it./narrative&&_it:/wrap-narrative||}</td>
 	<td class="part_org_ref">
-		{_it.@ref&&_it:/participating-org/ref||}
 		{_it.@ref&&_it:/participating-org/ref-url||}
 		{_it.@crs-channel-code-name&&_it:/participating-org/crs-channel-code||}
 		{_it.@activity-id&&_it:/participating-org/activity-id||}
@@ -1781,27 +1828,24 @@
 	<td class="part_org_type" title="{_it.@type-description||}" data-sort-value="{_it.@type}">{_it.@type-name||}</td>
 </tr>
 
-#^/participating-org/ref
-<div class="part_org_text">{_it.@ref||}</div>
-
 #^/participating-org/ref-url
 <div>
-	<span title="Organisation Reference" class="ref">
-		REF <a title="Organisation Reference" href="{origin}/ctrack.html?publisher={_it.@ref||}" target="_blank">{_it.@ref||}</a>
+	<span title="Machine-readable identification string for the organisation issuing the report." class="ref">
+		REF <a href="{origin}/ctrack.html?publisher={_it.@ref||}" target="_blank">{_it.@ref||}</a>
 	</span>
 </div>
 
 #^/participating-org/crs-channel-code
 <div>
-	<span title="CRS Channel Code" class="ref">
+	<span title="Under CRS++ Reporting Directives the CRS channel code identifies the implementing agency." class="ref">
 		CRS <span>{_it.@crs-channel-code-name||}</span>
 	</span>
 </div>
 
 #^/participating-org/activity-id
-<div>
-	<span title="Activity ID" class="ref">
-		ID <a href="{origin}/q.html?aid={_it.@activity-id}" target="_blank">{_it.@activity-id||}</a>
+<div class="part_org_id">
+	<span title="A valid activity identifier published by the participating organisation which points to the activity that it has published to IATI that describes its role in this activity." class="ref">
+		ID <a href="{origin}/savi/?aid={_it.@activity-id}" target="_blank">{_it.@activity-id||}</a>
 	</span>
 </div>
 
@@ -1879,9 +1923,9 @@
 		<div class="text">Reported by</div><div class="reporting_org"><a href="{origin}/ctrack.html?publisher={_it./reporting-org@ref}" target="blank">{_it./reporting-org/narrative.0.text||}</a> <span class="ref">{_it./reporting-org@ref||}</span> <span class="type">{_it./reporting-org@type-name||}</span>{_it./reporting-org@secondary-reporter==1&&secondary_reporter||}</div>
 	</div>
 	<div class="wrap_iati_identifier org_id">	<!--	ORG IDENTIFIER AND SOURCES	-->
-		<div class="text">Organisation identifier <a href="{origin}/q.html?&from=xson&root=/iati-organisations/iati-organisation&pid={_it./organisation-identifier}"  target="_blank">{_it./organisation-identifier||}</a></div>
+		<div class="text">Organisation identifier <a href="{origin}/savi/?pid={_it./organisation-identifier}"  target="_blank">{_it./organisation-identifier||}</a></div>
 		<div class="data_source">
-			<a class="xml" href="{origin}/q.xml?&from=xson&root=/iati-organisations/iati-organisation&pid={_it./organisation-identifier}" target="_blank"><span>view</span> xml</a><a class="json" href="{origin}/q.json?&from=xson&root=/iati-organisations/iati-organisation&pid={_it./organisation-identifier}" target="_blank"><span>view</span> json</a><a class="dlogs" href="{origin}/ctrack.html#view=dash_sluglog&slug={_it.@dataset}" target="_blank"><span>view dataset</span> logs</a><a class="slug" href="http://iatiregistry.org/dataset/{_it.@dataset}" target="_blank"><span>view iati registry</span> dataset</a><a class="csv" href="{origin}/q.csv?&from=xson&root=/iati-organisations/iati-organisation&pid={_it./organisation-identifier}" target="_blank"><span>download</span> csv</a>
+			<a class="xml" href="{origin}/q.xml?pid={_it./organisation-identifier}" target="_blank"><span>view</span> xml</a><a class="json" href="{origin}/q.json?&from=xson&root=/iati-organisations/iati-organisation&pid={_it./organisation-identifier}" target="_blank"><span>view</span> json</a><a class="dlogs" href="{origin}/ctrack.html#view=dash_sluglog&slug={_it.@dataset}" target="_blank"><span>view dataset</span> logs</a><a class="slug" href="http://iatiregistry.org/dataset/{_it.@dataset}" target="_blank"><span>view iati registry</span> dataset</a><a class="csv" href="{origin}/q.csv?&from=xson&root=/iati-organisations/iati-organisation&pid={_it./organisation-identifier}" target="_blank"><span>download</span> csv</a>
 		</div>
 	</div>
 	{_it./document-link&&_it:/wrap-document-link||}

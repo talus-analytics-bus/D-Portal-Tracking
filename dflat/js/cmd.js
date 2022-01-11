@@ -226,14 +226,22 @@ cmd.run=async function(argv)
 
 	if( argv._[0]=="packages" )
 	{
-		if( argv._[1] )
-		{
-			await require("./packages.js").process_download(argv)
-		}
-		else
-		{
-			await require("./packages.js").prepare_download(argv)
-		}
+		await require("./packages.js").cmd_prepare(argv)
+		return
+	}
+	if( argv._[0]=="packages-parse" )
+	{
+		await require("./packages.js").cmd_process(argv)
+		return
+	}
+	if( argv._[0]=="packages-meta" )
+	{
+		await require("./packages.js").cmd_meta(argv)
+		return
+	}
+	if( argv._[0]=="packages-join" )
+	{
+		await require("./packages.js").cmd_join(argv)
 		return
 	}
 
@@ -302,12 +310,39 @@ Prepare a data directory to fetch IATI packages into.
 	--source registry
 	The source for the packages, registry or datastore.
 
->	dflat packages filename
+>	dflat packages-parse filename
 
 Process a downloaded package into multiple files. The file to process 
 should be found in downloads/filename.xml we will then process it 
-and write it into other locations such as packages/ or 
-activities/ in the data directory.
+and write it into other locations such as json/ or 
+xml/ in the data directory.
+
+	--dir dataflat
+	Directory to process data in.
+
+>	dflat packages-meta [slugname]
+
+Merge all the individual meta json files created by package parsing into single 
+files containing all the data for all the packages.
+
+If slugname is given then just the meta for this package will be reparsed and 
+no global data will be modified. So you should run again later with no slugname 
+to generate the global meta.
+
+	--reparse
+	Reparse all the xml files to recreate the individual meta files.
+	
+	--dir dataflat
+	Directory to process data in.
+
+>	dflat packages-join [slugname]
+
+Join all the xml files back together to recreate the original data packages.
+
+If slugname is given then just this package will be created.
+
+	--dedupe
+	Use the meta data to remove duplicate IDs.
 
 	--dir dataflat
 	Directory to process data in.

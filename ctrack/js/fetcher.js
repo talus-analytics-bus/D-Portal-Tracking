@@ -39,7 +39,7 @@ fetcher.prefetch_aids=function(aids,f)
 			rows=d.rows
 		}
 		else
-		if( typeof rows == "object" &&  d.result ) // dportal dquery style
+		if( typeof rows == "object" &&  d.result ) // dportal dquery old style
 		{
 			rows=d.result
 		}
@@ -122,6 +122,10 @@ SELECT DISTINCT aid FROM xson WHERE
 )OR(
 	root='/iati-activities/iati-activity/transaction/description/narrative' AND
 	to_tsvector('simple', xson->>'') @@ to_tsquery('simple','COVID-19')
+)OR(
+	root='/iati-activities/iati-activity/sector' AND
+	xson->>'@vocabulary'='1' AND
+	xson->>'@code'='12264'
 )
 `)
 			break;

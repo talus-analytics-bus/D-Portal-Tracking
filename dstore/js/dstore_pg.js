@@ -6,7 +6,11 @@ module.exports=exports;
 var dstore_pg=exports;
 var dstore_back=exports;
 
+var url=require("url")
+
 exports.engine="pg";
+
+const Cursor = require('pg-cursor');
 
 //var wait=require("wait.for-es6");
 
@@ -547,7 +551,7 @@ await ( await dstore_pg.open() ).tx( async db => {
 
 			let xtree=dflat.xml_to_xson( orgxml )
 			dflat.clean(xtree)
-			xtree=xtree["/iati-organisations/iati-organisation"][0]
+			xtree=xtree["/iati-organisations/iati-organisation"][0]		// <-- only imports the first org, did not expect multiples so need to re hack this
 
 			let pid=xtree["/organisation-identifier"] || xtree["/reporting-org@ref"]
 
@@ -716,36 +720,108 @@ dstore_pg.warn_dupes = async function(db,aid,slug){
 	return ret
 };
 
+
+dstore_pg.query_params=function(string,params)
+{
+	let values=[]
+	let index=0
+	for( key in params )
+	{
+		let value=params[key]
+		
+		values[index]=value
+		string=string.replace(`\$\{${key}\}`,`$${index+1}`)
+		
+		index=index+1
+	}
+	return [string,values,index]
+}
+
+// probably not safe
+dstore_pg.query_params_string=function(string,params)
+{
+	let index=0
+	for( key in params )
+	{
+		let value=params[key]
+		if( typeof value == "string" )
+		{
+			value="'"+value.split("'").join("\\'")+"'"
+		}
+		
+		string=string.replace(`\$\{${key}\}`,value)
+		
+		index=index+1
+	}
+	return string
+}
+
 // the database part of the query code
 dstore_pg.query_select=async function(q,res,r,req){
 
-try{ // ignore all errors in this request
+let ss=query.stream_start(q,res,r,req)
+let conn=null
+let cursor=null
 
-await ( await dstore_pg.open(req) ).task( async db => {
-
-// return error do not crash
-var err=function (error) {
+let cleanup=function(error)
+{
 	r.error=error.message || error 
-	query.do_select_response(q,res,r);
-}
+	console.log(r)
 	
-	let qrows = await db.any("EXPLAIN ( ANALYZE FALSE , VERBOSE TRUE , FORMAT JSON ) "+r.query,r.qvals).catch(err);
-	if(qrows)
+	if( cursor )
 	{
-		r.explain=qrows[0]["QUERY PLAN"][0];
+		cursor.close(() => conn.done());
 	}
+	else
+	if( conn )  // I don't think this will happen
+	{
+		conn.done()
+	}
+
+	query.stream_stop(ss) // return error
+}
+
+	let db=await ( await dstore_pg.open(req) )
+
+	let sql=dstore_pg.query_params_string( r.query , r.qvals )
+	r.dquery=url.format({
+		protocol: req.protocol,
+		host:     req.get("host"),
+		pathname: "/dquery",
+		hash:     "#"+encodeURI(sql)
+	})
 	
-	let rows=await db.any(r.query,r.qvals).catch(err);
+	var qq=dstore_pg.query_params(r.query,r.qvals)
 	
-	r.rows=rows;
-	r.count=rows.length;
+	try{
 
-	query.do_select_response(q,res,r);
+		conn = await db.connect()
+		cursor = conn.client.query(new Cursor(qq[0],qq[1]))
+		var rows=[]
+		do{
 
-})
+			rows = await cursor.read(1)
+			if( rows[0] )
+			{
+				query.stream_item(ss,rows[0])
+			}
+			if(ss.broken) // no one is listening and webpage connection has been closed
+			{
+				break // so stop sending data and cleanup
+			}
 
-}catch(e){console.log(e)} // but do print out error
+		} while(rows.length>0);
+		cursor.close(() => conn.done());
 
+		delete r.query // do not return these
+		delete r.qvals
+
+		if(!ss.broken) // no one is listening
+		{
+			query.stream_stop(ss)
+		}
+
+	}catch(error){cleanup(error)}
 }
 
 
@@ -825,9 +901,9 @@ await ( await dstore_pg.open() ).task( async db => {
 	{
 		var v=fake_ids[i];
 		var p=await db.any("SELECT * FROM act  JOIN trans USING (aid)  WHERE reporting_ref=${reporting_ref} AND trans_code=${trans_code} ",{reporting_ref:v,trans_code:"C"}).catch(err);
-		for(j=0;j<rows.length;j++)
+		for(j=0;j<p.length;j++)
 		{
-			var t=rows[j];
+			var t=p[j];
 //					process.stdout.write(t.aid+"\n");
 			t.trans_code="D";
 			t.trans_flags=1;

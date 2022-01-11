@@ -634,7 +634,7 @@ Zeroes may denote issues with data quality (eg codes, dates, etc which are incom
 When / how is data in d-portal updated?
 
 #^faq_general_a8_text
-IATI data is updated every night (importing any data which has changed from the previous day) and a full import is done each weekend - in each instance the data is pulled from the IATI Registry.
+Newly published files are updated every night, as well as a full re-import of all files. The re-import ensures that any external value that may have been changed; for example, exchange rates, will be applied to all relevant data. Data is pulled from the IATI Registry.
 <p>CRS data is downloaded annually when it becomes available and then stored in <a href="https://github.com/devinit/D-Portal/tree/master/dstore/csv">Github</a>.</p>
 
 #^faq_general_q9_text
@@ -683,7 +683,8 @@ Data that is marked as invalid IATI xml when using the <a href="http://validator
 Which transaction types are used/not used in d-portal?
 
 #^faq_technical_a1_text
-‘Expenditure’ and ‘Disbursements’ for Spend columns/data.  If there are neither, but ‘Commitment’ data exists, then the Commitment data will be shown.
+‘Expenditure’ and ‘Disbursements’ for Spend columns/data. If there are neither, but ‘Outgoing Commitment’ data exists, then the Outgoing Commitment data will be shown.
+<p>'Outgoing commitment' for Total commitment columns. If outgoing commitments have not been published, but Disbursement and Expenditure exist, then the sum of Disbursement and Expenditure will be shown.</p>
 <p>‘Budgets’ in activity file, for Budget columns/data (eg in tables on d-portal) - if no budget data is present in the activity file, then ‘planned-disbursements’ are used if present.</p>
 
 #^faq_technical_q2_text

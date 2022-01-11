@@ -1,3 +1,65 @@
+Development Portal (2021-12-22 shi)
+==============================
+Change SAVi urls 
+
+
+Development Portal (2021-12-07 shi)
+==============================
+Add sector vocab 12 to SAVi
+Fix period column font size for results
+Display sector vocab code
+
+
+Development Portal (2021-12-02 shi)
+==============================
+Update pid url for SAVi org files
+
+
+Development Portal (2021-11-23 shi)
+==============================
+Fix typo for id links in participating-org SAVi
+
+
+Development Portal (2021-11-14 shi)
+==============================
+Fix budget end date column width in SAVi
+Fix Dash snapshots table text wrapping
+
+
+Development Portal (2021-09-24 shi)
+==============================
+Update print-friendly css
+Remove sorting for result tables
+
+
+Development Portal (2021-09-23 shi)
+==============================
+Fix css for participating-org id alignment
+Display comments for results data
+Update facet value type css
+Update facet separator
+Update result comment layout into tabs
+Update SAVi css
+
+
+Development Portal (2021-08-07 shi)
+==============================
+Update reference column for participating-org in SAVi
+Update hover titles for participating-org reference, crs and activity-id
+Update hover titles for transaction provider/receiver activity-id
+
+
+Development Portal (2021-08-02 shi)
+==============================
+Update activity list column names to Total Commitment
+Update all instances of 'outgoing commitments' to 'total 
+commitments' in footer
+Add new section about Total Commitment in Project list in main footer
+Add translations for all languages
+Update old reference and text in main footer
+Update old reference and text translations for all languages
+
+
 Development Portal (2021-07-24 shi)
 ==============================
 Add stats link to d-preview

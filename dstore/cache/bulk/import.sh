@@ -9,7 +9,7 @@ cd $BASEDIR;
 set +e
 
 echo Getting IATI ZIP
-if [ ! -s data ]
+if [ ! -s iati-data-main]
 then
   if [ ! -s iati.zip ]
   then
@@ -22,7 +22,7 @@ cd ../..
 
 bash ../bin/dstore-reset
 
-for directory in cache/bulk/iati/data/*; do
+for directory in cache/bulk/iati-data-main/data/*; do
   echo ''
   echo Directory:
   echo $directory
